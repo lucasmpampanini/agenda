@@ -4,6 +4,6 @@ from core.models import Eevnto
 
 class EventoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'data_evento', 'data_criacao')
-    list_filter =  ('usuario',)
+    list_filter = ('usuario',)
 
 admin.site.register(Eevnto, EventoAdmin)
