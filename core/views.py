@@ -28,11 +28,17 @@ def lista_eventos(request):
     user = request.user
     evento = Eevnto.objects.filter(usuario=user)
     dados = {'eventos': evento}
+
     return render(request, 'agenda.html', dados)
 
 @login_required(login_url='/login/')
 def evento(request):
-    return render(request, 'evento.html')
+    id_evento = request.GET.get('id')
+    dados = {}
+    if id_evento:
+        dados['evento'] = Eevnto.objects.get(id=id_evento)
+
+    return render(request, 'evento.html', dados)
 
 @login_required(login_url='/login/')
 def evento_submit(request):
@@ -41,11 +47,27 @@ def evento_submit(request):
         data_evento = request.POST.get('data_evento')
         descricao = request.POST.get('descricao')
         usuario = request.user
-        Eevnto.objects.create(
-            titulo=titulo,
-            data_evento=data_evento,
-            descricao=descricao,
-            usuario=usuario,
-        )
+        id_evento = request.POST.get('id_evento')
+        if id_evento:
+            Eevnto.objects.filter(id=id_evento).update(
+                titulo=titulo,
+                data_evento=data_evento,
+                descricao=descricao
+            )
+        else:
+            Eevnto.objects.create(
+                titulo=titulo,
+                data_evento=data_evento,
+                descricao=descricao,
+                usuario=usuario,
+            )
 
+    return redirect('/')
+
+@login_required(login_url='/login/')
+def delete_evento(request, id_evento):
+    usuario = request.user
+    evento = Eevnto.objects.get(id=id_evento)
+    if usuario == evento.usuario:
+        evento.delete()
     return redirect('/')
