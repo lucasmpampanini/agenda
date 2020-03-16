@@ -29,3 +29,23 @@ def lista_eventos(request):
     evento = Eevnto.objects.filter(usuario=user)
     dados = {'eventos': evento}
     return render(request, 'agenda.html', dados)
+
+@login_required(login_url='/login/')
+def evento(request):
+    return render(request, 'evento.html')
+
+@login_required(login_url='/login/')
+def evento_submit(request):
+    if request.POST:
+        titulo = request.POST.get('titulo')
+        data_evento = request.POST.get('data_evento')
+        descricao = request.POST.get('descricao')
+        usuario = request.user
+        Eevnto.objects.create(
+            titulo=titulo,
+            data_evento=data_evento,
+            descricao=descricao,
+            usuario=usuario,
+        )
+
+    return redirect('/')
